@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        DEPLOY_DIR = "/var/www/html"
+    }
+
     stages {
 
         stage('Checkout Code') {
@@ -12,25 +16,38 @@ pipeline {
         stage('Verify Files') {
             steps {
                 sh '''
-                echo "Checking website files..."
+                echo "Listing files..."
                 ls -la
                 '''
             }
         }
 
-        stage('Archive Website') {
+        stage('Deploy to Apache') {
             steps {
-                archiveArtifacts artifacts: '*.html, *.css', fingerprint: true
+                sh '''
+                echo "Deploying website to Apache directory..."
+                sudo rm -rf $DEPLOY_DIR/*
+                sudo cp -r *.html $DEPLOY_DIR/
+                sudo cp -r *.css $DEPLOY_DIR/
+                '''
+            }
+        }
+
+        stage('Restart Apache') {
+            steps {
+                sh '''
+                sudo systemctl restart apache2
+                '''
             }
         }
     }
 
     post {
         success {
-            echo 'Website pipeline completed successfully!'
+            echo 'Website Deployed Successfully on Ubuntu!'
         }
         failure {
-            echo 'Pipeline failed!'
+            echo 'Deployment Failed!'
         }
     }
 }
