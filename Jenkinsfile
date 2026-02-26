@@ -5,7 +5,7 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git branch: 'main', 
+                git branch: 'main',
                     url: 'https://github.com/alokatulkar/Jenkins_Webrepo.git'
             }
         }
@@ -25,11 +25,14 @@ pipeline {
                 '''
             }
         }
+    }
 
-        stage('Restart Apache') {
-            steps {
-                sh 'systemctl restart apache2'
-            }
+    post {
+        success {
+            echo 'Website Deployed Successfully!'
+        }
+        failure {
+            echo 'Deployment Failed!'
         }
     }
 }
