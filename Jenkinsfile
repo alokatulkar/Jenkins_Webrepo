@@ -19,16 +19,16 @@ pipeline {
         stage('Deploy to Apache') {
             steps {
                 sh '''
-                sudo rm -rf /var/www/html/*
-                sudo cp *.html /var/www/html/
-                sudo cp *.css /var/www/html/
+                rm -rf /var/www/html/*
+                cp *.html /var/www/html/
+                cp *.css /var/www/html/
                 '''
             }
         }
 
         stage('Restart Apache') {
             steps {
-                sh 'sudo systemctl restart apache2'
+                sh 'systemctl restart apache2'
             }
         }
     }
